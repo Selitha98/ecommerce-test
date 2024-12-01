@@ -1,15 +1,172 @@
+import React, { useState } from "react";
+import { ShoppingCart, User, Menu, Search, ChevronDown } from "lucide-react";
 import { NavLink } from "react-router-dom";
 
 function Navbar() {
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [isProductDropdownOpen, setIsProductDropdownOpen] = useState(false);
+
+  const ProductDropdown = () => {
+    return (
+      <div
+        className="absolute top-full left-0 w-full bg-white shadow-lg border-t border-gray-200"
+        onMouseLeave={() => setIsProductDropdownOpen(false)}
+      >
+        <div className="container mx-auto px-4 py-6 grid grid-cols-4 gap-6">
+          {/* Clothes Category */}
+          <div>
+            <ul className="space-y-2">
+              <li>
+                <NavLink to="/products/men-clothing" className="text-gray-600 hover:text-blue-500 transition-colors">
+                  Men's Clothing
+                </NavLink>
+              </li>
+              <li>
+                <NavLink to="/products/women-clothing" className="text-gray-600 hover:text-blue-500 transition-colors">
+                  Women's Clothing
+                </NavLink>
+              </li>
+              <li>
+                <NavLink to="/products/kids-clothing" className="text-gray-600 hover:text-blue-500 transition-colors">
+                  Kids' Clothing
+                </NavLink>
+              </li>
+            </ul>
+          </div>
+
+        </div>
+      </div>
+    );
+  };
+
+  const handleSearchSubmit = (e) => {
+    e.preventDefault();
+    console.log("Searching for:", searchQuery);
+  };
+
   return (
-    <nav className="bg-gray-400 text-white p-4 flex justify-center">
-      <NavLink to="/" className={({ isActive }) => `${isActive ? "text-blue-500" : "text-white hover:text-blue-300"} ml-2`}>
-        Home
-      </NavLink>
-      <NavLink to="/products" className={({ isActive }) => `${isActive ? "text-blue-500" : "text-white hover:text-blue-300"} ml-2`}>
-        Products
-      </NavLink>
-    </nav>
+    <div className="absolute top-0 left-0 bg-white ">
+      {/* Navigation Header */}
+      <header className="fixed top-0 left-0 right-0 z-50 bg-white shadow-md ">
+        <div className="container mx-2 px-6 py-3 flex items-center justify-between space-x-4 max-w-full">
+          {/* Logo */}
+          <div className="flex items-center flex-shrink-0">
+            <span className="text-xl font-bold text-gray-800 hidden md:block">MyStore</span>
+          </div>
+
+          {/* Mobile Menu Toggle */}
+          <div className="md:hidden">
+            <button onClick={() => setIsMenuOpen(!isMenuOpen)} className="text-gray-600 hover:text-gray-800">
+              <Menu size={24} />
+            </button>
+          </div>
+
+          {/* Search Bar */}
+          <div className="flex-grow mx-4">
+            <form onSubmit={handleSearchSubmit} className="relative">
+              <input
+                type="text"
+                placeholder="Search products..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full pl-10 pr-4 py-2 border rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              />
+              <Search size={20} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+            </form>
+          </div>
+
+          {/* Nav Link */}
+          <div className="hidden md:flex flex-grow mx-4 space-x-4 text-xs">
+            <NavLink
+              to="/"
+              className={({ isActive }) => `
+      px-3 py-2 rounded-lg transition-colors duration-300
+      ${isActive ? "bg-blue-500 text-white font-semibold" : "text-gray-600 hover:bg-gray-100 hover:text-gray-900"}
+    `}
+            >
+              Home
+            </NavLink>
+            <div className="relative" onClick={() => setIsProductDropdownOpen(true)}>
+              <NavLink
+                to="/products"
+                className={({ isActive }) => `
+              px-3 py-2 rounded-lg transition-colors duration-300 flex items-center
+              ${isActive ? "bg-blue-500 text-white font-semibold" : "text-gray-600 hover:bg-gray-100 hover:text-gray-900"}
+            `}
+              >
+                Products
+                <ChevronDown size={16} className="ml-1" />
+              </NavLink>
+
+              {isProductDropdownOpen && <ProductDropdown />}
+            </div>
+            <NavLink
+              to="/about"
+              className={({ isActive }) => `
+      px-3 py-2 rounded-lg transition-colors duration-300
+      ${isActive ? "bg-blue-500 text-white font-semibold" : "text-gray-600 hover:bg-gray-100 hover:text-gray-900"}
+    `}
+            >
+              About Us
+            </NavLink>
+            <NavLink
+              to="/contact"
+              className={({ isActive }) => `
+      px-3 py-2 rounded-lg transition-colors duration-300
+      ${isActive ? "bg-blue-500 text-white font-semibold" : "text-gray-600 hover:bg-gray-100 hover:text-gray-900"}
+    `}
+            >
+              Contact Us
+            </NavLink>
+          </div>
+
+          {/* Icons */}
+          <div className="flex items-center space-x-4 flex-shrink-0">
+            <button className="relative">
+              <ShoppingCart size={24} className="text-gray-600 hover:text-gray-900" />
+              <span className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full px-1.5 py-0.5 text-xs">3</span>
+            </button>
+            <button>
+              <User size={24} className="text-gray-600 hover:text-gray-900" />
+            </button>
+          </div>
+        </div>
+
+        {/* Mobile Navigation */}
+        <div
+          className={`
+        ${isMenuOpen ? "block" : "hidden"} 
+        md:hidden bg-white shadow-md
+      `}
+        >
+          <nav>
+            <ul className="flex flex-col items-center">
+              <li className="w-full text-center">
+                <a href="#home" className="block text-gray-600 hover:text-gray-900 px-4 py-2">
+                  Home
+                </a>
+              </li>
+              <li className="w-full text-center">
+                <a href="#products" className="block text-gray-600 hover:text-gray-900 px-4 py-2">
+                  Products
+                </a>
+              </li>
+              <li className="w-full text-center">
+                <a href="#about" className="block text-gray-600 hover:text-gray-900 px-4 py-2">
+                  About Us
+                </a>
+              </li>
+              <li className="w-full text-center">
+                <a href="#contact" className="block text-gray-600 hover:text-gray-900 px-4 py-2">
+                  Contact
+                </a>
+              </li>
+            </ul>
+          </nav>
+        </div>
+      </header>
+    </div>
   );
 }
 

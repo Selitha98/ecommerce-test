@@ -8,20 +8,31 @@ import Register from "./pages/Register";
 import Navbar from "./components/Navbar";
 import Cart from "./pages/Cart";
 import Products from "./pages/Products";
+import Footer from "./components/Footer";
+import ProductDetails from "./pages/ProductDetails";
+import AboutUs from "./pages/AboutUs";
+import ContactUs from "./pages/ContactUs";
+import Profile from "./pages/Profile";
 
 function App() {
   return (
-    <>
+    <div className="flex flex-col min-h-screen">
       <Router>
         <Navbar />
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/cart" element={<Cart />} />
-          <Route path="/products" element={<Products />} />
-
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
-        </Routes>
+        <main className="flex-grow">
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/cart" element={<Cart />} />
+            <Route path="/product-details" element={<ProductDetails />} />
+            <Route path="/products" element={<Products />} />
+            <Route path="/about-us" element={<AboutUs />} />
+            <Route path="/contact" element={<ContactUs />} />
+            <Route path="/profile" element={<Profile />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
+          </Routes>
+        </main>
+        <Footer />
       </Router>
       <ToastContainer
         position="top-right"
@@ -36,7 +47,7 @@ function App() {
         theme="light"
         transition:Bounce
       />
-    </>
+    </div>
   );
 }
 
