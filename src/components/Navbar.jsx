@@ -102,7 +102,7 @@ function Navbar() {
               {isProductDropdownOpen && <ProductDropdown />}
             </div>
             <NavLink
-              to="/about"
+              to="/about-us"
               className={({ isActive }) => `
       px-3 py-2 rounded-lg transition-colors duration-300
       ${isActive ? "bg-blue-500 text-white font-semibold" : "text-gray-600 hover:bg-gray-100 hover:text-gray-900"}

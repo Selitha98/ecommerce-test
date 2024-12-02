@@ -27,7 +27,7 @@ export const getAllProducts = async (options = {}) => {
     const fullUrl = queryString ? `${url}?${queryString}` : url;
 
     const response = await axios.get(fullUrl);
-    console.log(response)
+    console.log(response);
     return response.data;
   } catch (error) {
     console.error("Error fetching products:", error);
@@ -45,12 +45,12 @@ export const getProductById = async (productId) => {
   }
 };
 
-export const getLimitProducts = async (category) => {
+export const getProductByIdCategories = async () => {
   try {
-    const response = await axios.get(`${BASE_URL}/products/category/${category}`);
+    const response = await axios.get(`${BASE_URL}/products/categories`);
     return response.data;
   } catch (error) {
-    console.error(`Error fetching products in category ${category}:`, error);
+    console.error(`Error `, error);
     throw error;
   }
 };

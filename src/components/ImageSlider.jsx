@@ -9,11 +9,11 @@ function ImageSlider() {
   const [currentSlide, setCurrentSlide] = useState(0);
 
   const nextSlide = () => {
-    setCurrentSlide((prev) => (prev === limitProducts.length - 1 ? 0 : prev + 1));
+    setCurrentSlide((prev) => (prev === limitProducts?.length - 1 ? 0 : prev + 1));
   };
 
   const prevSlide = () => {
-    setCurrentSlide((prev) => (prev === 0 ? limitProducts.length - 1 : prev - 1));
+    setCurrentSlide((prev) => (prev === 0 ? limitProducts?.length - 1 : prev - 1));
   };
 
   useEffect(() => {

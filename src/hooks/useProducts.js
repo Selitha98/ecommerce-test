@@ -1,5 +1,5 @@
 import { useQuery } from "react-query";
-import { getAllProducts, getProductById } from "../services/api";
+import { getAllProducts, getProductById, getProductByIdCategories } from "../services/api";
 
 // fetch all products
 export const useProducts = (options = {}) => {
@@ -21,5 +21,14 @@ export const useProductDetails = (productId) => {
     enabled: !!productId,
   });
 };
+
+// fetch a products categories
+export const useProductCategories = () => {
+    return useQuery({
+      queryKey: ["products-categories"],
+      queryFn: getProductByIdCategories,
+    });
+  };
+  
 
 
