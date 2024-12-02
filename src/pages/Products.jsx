@@ -3,12 +3,14 @@ import { ShoppingCart } from "lucide-react";
 import Spinner from "../components/Spinner";
 import { useLocation, useNavigate } from "react-router-dom";
 import { getAllProducts } from "../services/api";
+import { useCart } from "../context/CartProvider";
 
 function Products() {
   const [products, setProducts] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isError, setIsError] = useState(false);
   const location = useLocation();
+  const { addToCart } = useCart();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -34,6 +36,16 @@ function Products() {
 
     fetchProducts();
   }, [location.search]);
+
+
+  const handleAddToCart = (item, quantity = 1) => {
+    addToCart({
+      id: item.id,
+      title: item.title,
+      price: item.price,
+      image: item.image
+    }, quantity);
+  };
 
   const handleProductClick = (productId) => {
     navigate(`/products/${productId}`);
@@ -66,7 +78,7 @@ function Products() {
                 <span className="text-xl font-bold text-blue-600">{`$ ${item.price}`}</span>
                 <span className="bg-green-100 text-green-800 text-xs px-2 py-1 rounded">{item?.rating?.rate}</span>
               </div>
-              <button className="w-full mt-4 bg-blue-600 text-white py-2 rounded flex items-center justify-center hover:bg-blue-700">
+              <button  onClick={() =>handleAddToCart(item)} className="w-full mt-4 bg-blue-600 text-white py-2 rounded flex items-center justify-center hover:bg-blue-700">
                 <ShoppingCart className="mr-2" size={18} />
                 Add to Cart
               </button>

@@ -1,10 +1,21 @@
 /* eslint-disable react/prop-types */
 import React, { useState } from "react";
 import { ShoppingCart, Heart, Plus, Minus } from 'lucide-react';
+import { useCart } from "../context/CartProvider";
 
 const Product = ({ product }) => {
   const [selectedImage, setSelectedImage] = useState(product.image);
   const [quantity, setQuantity] = useState(1);
+  const { addToCart } = useCart();
+
+  const handleAddToCart = (item, quantity = 1) => {
+    addToCart({
+      id: item.id,
+      title: item.title,
+      price: item.price,
+      image: item.image
+    }, quantity);
+  };
 
   console.log(product);
 
@@ -58,7 +69,7 @@ const Product = ({ product }) => {
               </button>
             </div>
 
-            <button className="flex items-center bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors">
+            <button onClick={() => handleAddToCart(product ,quantity)} className="flex items-center bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors">
               <ShoppingCart className="mr-2" size={20} />
               Add to Cart
             </button>

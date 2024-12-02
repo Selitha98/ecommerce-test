@@ -5,9 +5,11 @@ import { useProductCategories } from "../hooks/useProducts";
 import { useAuth } from "../context/AuthContext";
 import { Logout } from "@mui/icons-material";
 import Swal from "sweetalert2";
+import { useCart } from "../context/CartProvider";
 
 function Navbar() {
   const { isAuthenticated, logout } = useAuth();
+  const { cart } = useCart();
   const { data: productCategories, isLoading, isError } = useProductCategories();
   const navigate = useNavigate();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -141,7 +143,7 @@ function Navbar() {
           <div className="flex items-center space-x-4 flex-shrink-0">
             <button className="relative" onClick={() => navigate("/cart")}>
               <ShoppingCart size={24} className="text-gray-600 hover:text-gray-900" />
-              <span className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full px-1.5 py-0.5 text-xs">3</span>
+              <span className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full px-1.5 py-0.5 text-xs">{cart.length > 0 ?cart.length : "0"}</span>
             </button>
             {isAuthenticated ? (
               <>

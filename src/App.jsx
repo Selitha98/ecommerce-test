@@ -16,6 +16,7 @@ import Profile from "./pages/Profile";
 import LayoutWithNavbarFooter from "./components/LayoutWithNavbarFooter";
 import { AuthProvider } from "./context/AuthContext";
 import ProtectedRoute from "./auth/ProtectedRoute";
+import { CartProvider } from "./context/CartProvider";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -30,42 +31,44 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
-        <div className="flex flex-col min-h-screen">
-          <Router>
-            <Routes>
-              {/* Login and Register routes without Navbar/Footer */}
-              <Route path="/login" element={<Login />} />
-              <Route path="/register" element={<Register />} />
+        <CartProvider>
+          <div className="flex flex-col min-h-screen">
+            <Router>
+              <Routes>
+                {/* Login and Register routes without Navbar/Footer */}
+                <Route path="/login" element={<Login />} />
+                <Route path="/register" element={<Register />} />
 
-              {/* Protected Routes with Navbar and Footer */}
-              <Route element={<LayoutWithNavbarFooter />}>
-                <Route path="/" element={<Home />} />
-                <Route element={<ProtectedRoute />}>
-                  <Route path="/cart" element={<Cart />} />
-                  <Route path="/profile" element={<Profile />} />
+                {/* Protected Routes with Navbar and Footer */}
+                <Route element={<LayoutWithNavbarFooter />}>
+                  <Route path="/" element={<Home />} />
+                  <Route element={<ProtectedRoute />}>
+                    <Route path="/cart" element={<Cart />} />
+                    <Route path="/profile" element={<Profile />} />
+                  </Route>
+                  <Route path="/products" element={<Products />} />
+                  <Route path="/products/:productId" element={<ProductDetails />} />
+
+                  <Route path="/about-us" element={<AboutUs />} />
+                  <Route path="/contact" element={<ContactUs />} />
                 </Route>
-                <Route path="/products" element={<Products />} />
-                <Route path="/products/:productId" element={<ProductDetails />} />
-
-                <Route path="/about-us" element={<AboutUs />} />
-                <Route path="/contact" element={<ContactUs />} />
-              </Route>
-            </Routes>
-          </Router>
-          <ToastContainer
-            position="top-right"
-            autoClose={2000}
-            hideProgressBar={false}
-            newestOnTop={false}
-            closeOnClick
-            rtl={false}
-            pauseOnFocusLoss
-            draggable
-            pauseOnHover
-            theme="light"
-            transition:Bounce
-          />
-        </div>
+              </Routes>
+            </Router>
+            <ToastContainer
+              position="top-right"
+              autoClose={2000}
+              hideProgressBar={false}
+              newestOnTop={false}
+              closeOnClick
+              rtl={false}
+              pauseOnFocusLoss
+              draggable
+              pauseOnHover
+              theme="light"
+              transition:Bounce
+            />
+          </div>
+        </CartProvider>
       </AuthProvider>
     </QueryClientProvider>
   );
