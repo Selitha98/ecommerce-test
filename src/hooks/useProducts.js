@@ -6,6 +6,10 @@ export const useProducts = (options = {}) => {
   return useQuery({
     queryKey: ["products", JSON.stringify(options)],
     queryFn: () => getAllProducts(options),
+    staleTime: 5 * 60 * 1000,   
+    cacheTime: 10 * 60 * 1000, 
+    refetchOnMount: false,
+    refetchOnWindowFocus: false,
   });
 };
 

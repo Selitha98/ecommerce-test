@@ -27,6 +27,7 @@ export const getAllProducts = async (options = {}) => {
     const fullUrl = queryString ? `${url}?${queryString}` : url;
 
     const response = await axios.get(fullUrl);
+    console.log(response)
     return response.data;
   } catch (error) {
     console.error("Error fetching products:", error);

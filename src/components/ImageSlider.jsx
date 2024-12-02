@@ -1,50 +1,33 @@
 import React, { useState, useEffect } from "react";
 import {  ChevronLeft, ChevronRight } from "lucide-react";
 import { useProducts } from "../hooks/useProducts";
+import Spinner from "./Spinner";
 
-
-const products = [
-  {
-    id: 1,
-    name: "Stylish Sneakers",
-    description: "Comfortable and trendy sneakers",
-    image: "/api/placeholder/800/400?text=Sneakers",
-    price: 129.99,
-  },
-  {
-    id: 2,
-    name: "Leather Jacket",
-    description: "Premium quality leather jacket",
-    image: "/api/placeholder/800/400?text=Leather+Jacket",
-    price: 249.99,
-  },
-  {
-    id: 3,
-    name: "Smart Watch",
-    description: "Advanced fitness and health tracker",
-    image: "/api/placeholder/800/400?text=Smart+Watch",
-    price: 199.99,
-  },
-];
 
 function ImageSlider() {
   const { data: limitProducts, isLoading, isError, error } = useProducts({ limit: 3 });
-  console.log(limitProducts)
-
   const [currentSlide, setCurrentSlide] = useState(0);
 
   const nextSlide = () => {
-    setCurrentSlide((prev) => (prev === products.length - 1 ? 0 : prev + 1));
+    setCurrentSlide((prev) => (prev === limitProducts.length - 1 ? 0 : prev + 1));
   };
 
   const prevSlide = () => {
-    setCurrentSlide((prev) => (prev === 0 ? products.length - 1 : prev - 1));
+    setCurrentSlide((prev) => (prev === 0 ? limitProducts.length - 1 : prev - 1));
   };
 
   useEffect(() => {
     const slideInterval = setInterval(nextSlide, 5000);
     return () => clearInterval(slideInterval);
   }, []);
+
+  if (isLoading) {
+    return (
+      <div className="flex justify-center items-center min-h-screen mt-16">
+        <Spinner size={70} />
+      </div>
+    );
+  }
 
   return (
     <div className="relative w-full min-h-screen overflow-hidden ">
@@ -85,7 +68,7 @@ function ImageSlider() {
 
       {/* Slide Indicators */}
       <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2">
-        {products.map((_, index) => (
+        {limitProducts.map((_, index) => (
           <button
             key={index}
             onClick={() => setCurrentSlide(index)}
