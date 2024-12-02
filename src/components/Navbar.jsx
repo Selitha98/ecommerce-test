@@ -192,24 +192,24 @@ function Navbar() {
           <nav>
             <ul className="flex flex-col items-center">
               <li className="w-full text-center">
-                <a href="#home" className="block text-gray-600 hover:text-gray-900 px-4 py-2">
+                <Link to="/" onClick={() => setIsMenuOpen(false)} className="block text-gray-600 hover:text-gray-900 px-4 py-2">
                   Home
-                </a>
+                </Link>
               </li>
               <li className="w-full text-center">
-                <a href="#products" className="block text-gray-600 hover:text-gray-900 px-4 py-2">
+                <Link to="/products" onClick={() => setIsMenuOpen(false)} className="block text-gray-600 hover:text-gray-900 px-4 py-2">
                   Products
-                </a>
+                </Link>
               </li>
               <li className="w-full text-center">
-                <a href="#about" className="block text-gray-600 hover:text-gray-900 px-4 py-2">
+                <Link to="/about-us" onClick={() => setIsMenuOpen(false)} className="block text-gray-600 hover:text-gray-900 px-4 py-2">
                   About Us
-                </a>
+                </Link>
               </li>
               <li className="w-full text-center">
-                <a href="#contact" className="block text-gray-600 hover:text-gray-900 px-4 py-2">
+                <Link to="/contact" onClick={() => setIsMenuOpen(false)} className="block text-gray-600 hover:text-gray-900 px-4 py-2">
                   Contact
-                </a>
+                </Link>
               </li>
             </ul>
           </nav>
