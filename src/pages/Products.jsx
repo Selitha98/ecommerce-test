@@ -1,10 +1,38 @@
-import React from "react";
-import { Heart, ShoppingCart } from "lucide-react";
-import { useProducts } from "../hooks/useProducts";
+import React, { useEffect, useState } from "react";
+import {  ShoppingCart } from "lucide-react";
 import Spinner from "../components/Spinner";
+import { useLocation } from "react-router-dom";
+import { getAllProducts } from "../services/api";
 
 function Products() {
-  const { data: products, isLoading, isError, error } = useProducts();
+  const [products, setProducts] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isError, setIsError] = useState(false);
+  const location = useLocation();
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        setIsLoading(true);
+        const searchParams = new URLSearchParams(location.search);
+        const category = searchParams.get('category');
+
+        // Fetch products, passing category if available
+        const fetchedProducts = await getAllProducts({ 
+          category: category || null 
+        });
+
+        setProducts(fetchedProducts);
+        setIsLoading(false);
+      } catch (error) {
+        console.error("Error fetching products:", error);
+        setIsError(true);
+        setIsLoading(false);
+      }
+    };
+
+    fetchProducts();
+  }, [location.search]);
 
 
   if (isLoading) {

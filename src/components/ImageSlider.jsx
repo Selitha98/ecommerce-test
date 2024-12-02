@@ -1,19 +1,31 @@
 import React, { useState, useEffect } from "react";
-import {  ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useProducts } from "../hooks/useProducts";
 import Spinner from "./Spinner";
 
-
 function ImageSlider() {
-  const { data: limitProducts, isLoading, isError, error } = useProducts({ limit: 3 });
+  const { data: limitProducts = [], isLoading, isError } = useProducts({ limit: 3 });
   const [currentSlide, setCurrentSlide] = useState(0);
 
+  const displayProducts =
+    limitProducts.length > 0
+      ? limitProducts
+      : [
+          {
+            id: "placeholder-1",
+            image: "/api/placeholder/1920/1080",
+            title: "Featured Product",
+            description: "Explore our latest collection",
+            price: 0,
+          },
+        ];
+
   const nextSlide = () => {
-    setCurrentSlide((prev) => (prev === limitProducts?.length - 1 ? 0 : prev + 1));
+    setCurrentSlide((prev) => (prev === displayProducts?.length - 1 ? 0 : prev + 1));
   };
 
   const prevSlide = () => {
-    setCurrentSlide((prev) => (prev === 0 ? limitProducts?.length - 1 : prev - 1));
+    setCurrentSlide((prev) => (prev === 0 ? displayProducts?.length - 1 : prev - 1));
   };
 
   useEffect(() => {
@@ -33,7 +45,7 @@ function ImageSlider() {
     <div className="relative w-full min-h-screen overflow-hidden ">
       {/* Slider Images */}
       <div className="absolute inset-0 transition-transform duration-500 ease-in-out" style={{ transform: `translateX(-${currentSlide * 100}%)` }}>
-        {limitProducts.map((product, index) => (
+        {displayProducts.map((product, index) => (
           <div
             key={product.id}
             className="absolute w-full h-full flex items-center justify-center"
@@ -68,7 +80,7 @@ function ImageSlider() {
 
       {/* Slide Indicators */}
       <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2">
-        {limitProducts.map((_, index) => (
+        {displayProducts.map((_, index) => (
           <button
             key={index}
             onClick={() => setCurrentSlide(index)}

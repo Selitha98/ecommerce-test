@@ -22,7 +22,7 @@ function Navbar() {
             <ul className="space-y-2">
               {productCategories.map((category, index) => (
                 <li key={index}>
-                <NavLink to={`/products/${category}`} className="text-gray-600 hover:text-blue-500 transition-colors">
+                <NavLink to={`/products?category=${category}`} className="text-gray-600 hover:text-blue-500 transition-colors">
                   {category.toUpperCase()}
                 </NavLink>
               </li>
