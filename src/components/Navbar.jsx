@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { ShoppingCart, User, Menu, Search, ChevronDown, LogIn } from "lucide-react";
+import { ShoppingCart, User, Menu, Search, ChevronDown, LogIn, X } from "lucide-react";
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import { useProductCategories } from "../hooks/useProducts";
 import { useAuth } from "../context/AuthContext";
@@ -9,13 +9,12 @@ import { useCart } from "../context/CartProvider";
 
 function Navbar() {
   const { isAuthenticated, logout } = useAuth();
-  const { cart , clearCart} = useCart();
+  const { cart, clearCart } = useCart();
   const { data: productCategories, isLoading, isError } = useProductCategories();
   const navigate = useNavigate();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [isProductDropdownOpen, setIsProductDropdownOpen] = useState(false);
-  console.log(isAuthenticated);
 
   function handleLogout() {
     Swal.fire({
@@ -28,10 +27,18 @@ function Navbar() {
     }).then((result) => {
       if (result.isConfirmed) {
         logout();
-        clearCart()
+        clearCart();
       }
     });
   }
+
+  const handleSearchSubmit = (e) => {
+    e.preventDefault();
+
+    if (searchQuery.trim()) {
+      navigate(`/products?title=${encodeURIComponent(searchQuery.trim())}`);
+    }
+  };
 
   const ProductDropdown = () => {
     return (
@@ -57,11 +64,6 @@ function Navbar() {
     );
   };
 
-  const handleSearchSubmit = (e) => {
-    e.preventDefault();
-    console.log("Searching for:", searchQuery);
-  };
-
   return (
     <div className="absolute top-0 left-0 bg-white ">
       {/* Navigation Header */}
@@ -82,18 +84,33 @@ function Navbar() {
           </div>
 
           {/* Search Bar */}
-          <div className="flex-grow mx-4">
-            <form onSubmit={handleSearchSubmit} className="relative">
+          {/* Search Bar */}
+          <form onSubmit={handleSearchSubmit} className="flex-grow mx-4 max-w-xl">
+            <div className="relative">
               <input
                 type="text"
                 placeholder="Search products..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 border rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full py-2 px-4 pr-10 border rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
-              <Search size={20} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
-            </form>
-          </div>
+              {searchQuery && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setSearchQuery("");
+                    navigate("/products"); // Navigate to all products when cleared
+                  }}
+                  className="absolute right-10 top-1/2 transform -translate-y-1/2"
+                >
+                  <X className="text-gray-500 hover:text-gray-700" size={20} />
+                </button>
+              )}
+              <button type="submit" className="absolute right-2 top-1/2 transform -translate-y-1/2">
+                <Search className="text-gray-500" />
+              </button>
+            </div>
+          </form>
 
           {/* Nav Link */}
           <div className="hidden md:flex flex-grow mx-4 space-x-4 text-xs">
@@ -144,7 +161,9 @@ function Navbar() {
           <div className="flex items-center space-x-4 flex-shrink-0">
             <button className="relative" onClick={() => navigate("/cart")}>
               <ShoppingCart size={24} className="text-gray-600 hover:text-gray-900" />
-              <span className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full px-1.5 py-0.5 text-xs">{cart.length > 0 ?cart.length : "0"}</span>
+              <span className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full px-1.5 py-0.5 text-xs">
+                {cart.length > 0 ? cart.length : "0"}
+              </span>
             </button>
             {isAuthenticated ? (
               <>
