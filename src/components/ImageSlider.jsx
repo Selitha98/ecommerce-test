@@ -13,7 +13,7 @@ function ImageSlider() {
       : [
           {
             id: "placeholder-1",
-            image: "/api/placeholder/1920/1080",
+            image: "https://fakestoreapi.com/img/81fPKd-2AYL._AC_SL1500_.jpg",
             title: "Featured Product",
             description: "Explore our latest collection",
             price: 0,
