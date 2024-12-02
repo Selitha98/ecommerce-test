@@ -2,10 +2,12 @@ import React, { useState, useEffect } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useProducts } from "../hooks/useProducts";
 import Spinner from "./Spinner";
+import { useNavigate } from "react-router-dom";
 
 function ImageSlider() {
   const { data: limitProducts = [], isLoading, isError } = useProducts({ limit: 3 });
   const [currentSlide, setCurrentSlide] = useState(0);
+  const navigate = useNavigate();
 
   const displayProducts =
     limitProducts.length > 0
@@ -32,6 +34,10 @@ function ImageSlider() {
     const slideInterval = setInterval(nextSlide, 5000);
     return () => clearInterval(slideInterval);
   }, []);
+
+  const handleProductClick = (productId) => {
+    navigate(`/products/${productId}`);
+  };
 
   if (isLoading) {
     return (
@@ -62,7 +68,7 @@ function ImageSlider() {
                 <p className="mb-4">{product.description}</p>
                 <div className="flex justify-between items-center">
                   <span className="text-xl font-semibold">${product.price}</span>
-                  <button className="bg-blue-500 hover:bg-blue-600 px-4 py-2 rounded">Shop Now</button>
+                  <button className="bg-blue-500 hover:bg-blue-600 px-4 py-2 rounded" onClick={() => handleProductClick(product.id)}>Shop Now</button>
                 </div>
               </div>
             </div>

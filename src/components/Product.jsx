@@ -1,128 +1,80 @@
-import React, { useState } from 'react';
-import { 
-  Container, 
-  Grid, 
-  Typography, 
-  Button, 
-  IconButton, 
-  Box, 
-  Card, 
-  CardMedia, 
-  CardContent 
-} from '@mui/material';
-import AddIcon from '@mui/icons-material/Add';
-import RemoveIcon from '@mui/icons-material/Remove';
-import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
-import FavoriteIcon from '@mui/icons-material/Favorite';
+/* eslint-disable react/prop-types */
+import React, { useState } from "react";
+import { ShoppingCart, Heart, Plus, Minus } from 'lucide-react';
 
 const Product = ({ product }) => {
-  const [selectedImage, setSelectedImage] = useState(product.images[0]);
+  const [selectedImage, setSelectedImage] = useState(product.image);
   const [quantity, setQuantity] = useState(1);
 
+  console.log(product);
+
   return (
-    <Container maxWidth="lg" sx={{ py: 4 }}>
-      {/* Product Details Section */}
-      <Grid container spacing={4}>
-        
-        {/* Image Gallery */}
-        <Grid item xs={12} md={6}>
-          <Box sx={{ mb: 2 }}>
-            <Card>
-              <CardMedia
-                component="img"
-                height="400"
-                image={selectedImage}
-                alt={product.name}
-                sx={{ objectFit: 'cover' }}
-              />
-            </Card>
-          </Box>
-          
-          {/* Thumbnail Image Selector */}
-          <Box sx={{ display: 'flex', gap: 2, overflowX: 'auto' }}>
-            {product.images.map((image, index) => (
-              <Card 
-                key={index}
-                sx={{ 
-                  width: 64, 
-                  height: 64, 
-                  cursor: 'pointer',
-                  border: selectedImage === image ? '2px solid primary.main' : 'none'
-                }}
-                onClick={() => setSelectedImage(image)}
-              >
-                <CardMedia
-                  component="img"
-                  height="64"
-                  image={image}
+    <div className="container mx-auto px-4 py-8">
+      <div className="grid md:grid-cols-2 gap-8">
+        <div className="space-y-4">
+
+          {/* Main Image */}
+          <div className="bg-gray-100 rounded-lg overflow-hidden">
+            <img src={selectedImage} alt={product.title} className="w-auto h-[500px] object-cover" />
+          </div>
+
+          {product.images && product.images.length > 1 && (
+            <div className="flex space-x-2 overflow-x-auto">
+              {product.images.map((image, index) => (
+                <img
+                  key={index}
+                  src={image}
                   alt={`Thumbnail ${index + 1}`}
-                  sx={{ objectFit: 'cover' }}
+                  className={`w-20 h-20 object-cover rounded cursor-pointer ${
+                    selectedImage === image ? "border-2 border-blue-500" : "opacity-70 hover:opacity-100"
+                  }`}
+                  onClick={() => setSelectedImage(image)}
                 />
-              </Card>
-            ))}
-          </Box>
-        </Grid>
+              ))}
+            </div>
+          )}
+        </div>
 
         {/* Product Information */}
-        <Grid item xs={12} md={6}>
-          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-            <Typography variant="h4" component="h1">
-              {product.name}
-            </Typography>
+        <div className="space-y-6">
+          <h1 className="text-3xl font-bold text-gray-900">{product.title}</h1>
+
+          <p className="text-gray-600">{product.shortDescription}</p>
+
+          <div className="flex items-center space-x-4">
+            <span className="text-2xl font-bold text-blue-600">${product.price.toFixed(2)}</span>
+
+            {product.originalPrice && <span className="text-gray-500 line-through">${product.originalPrice.toFixed(2)}</span>}
+          </div>
+
+          <div className="flex items-center space-x-4">
+            <div className="flex items-center border rounded-lg">
+              <button onClick={() => setQuantity(Math.max(1, quantity - 1))} className="p-2 hover:bg-gray-100">
+                <Minus size={20} />
+              </button>
+              <span className="px-4 text-lg">{quantity}</span>
+              <button onClick={() => setQuantity(quantity + 1)} className="p-2 hover:bg-gray-100">
+                <Plus size={20} />
+              </button>
+            </div>
+
+            <button className="flex items-center bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors">
+              <ShoppingCart className="mr-2" size={20} />
+              Add to Cart
+            </button>
+
             
-            <Typography variant="body1" color="text.secondary">
-              {product.shortDescription}
-            </Typography>
+          </div>
 
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-              <Typography variant="h5" color="primary">
-                ${product.price.toFixed(2)}
-              </Typography>
-              {product.originalPrice && (
-                <Typography 
-                  variant="body2" 
-                  color="text.secondary" 
-                  sx={{ textDecoration: 'line-through' }}
-                >
-                  ${product.originalPrice.toFixed(2)}
-                </Typography>
-              )}
-            </Box>
+          <hr className="border-t border-gray-200" />
 
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-              <Box sx={{ display: 'flex', alignItems: 'center', border: 1, borderRadius: 1 }}>
-                <IconButton onClick={() => setQuantity(Math.max(1, quantity - 1))}>
-                  <RemoveIcon />
-                </IconButton>
-                <Typography sx={{ px: 2 }}>{quantity}</Typography>
-                <IconButton onClick={() => setQuantity(quantity + 1)}>
-                  <AddIcon />
-                </IconButton>
-              </Box>
-              
-              <Button 
-                variant="contained" 
-                startIcon={<ShoppingCartIcon />}
-              >
-                Add to Cart
-              </Button>
-              
-              <IconButton color="secondary">
-                <FavoriteIcon />
-              </IconButton>
-            </Box>
-          </Box>
-        </Grid>
-      </Grid>
-
-      {/* Product Description Section */}
-      <Box sx={{ mt: 4, p: 3, bgcolor: 'grey.100', borderRadius: 2 }}>
-        <Typography variant="h5" sx={{ mb: 2 }}>
-          Product Description
-        </Typography>
-        <div dangerouslySetInnerHTML={{ __html: product.description }} />
-      </Box>
-    </Container>
+          <div>
+            <h2 className="text-xl font-semibold mb-4">Product Description</h2>
+            <div className="text-gray-700 prose max-w-none" dangerouslySetInnerHTML={{ __html: product.description }} />
+          </div>
+        </div>
+      </div>
+    </div>
   );
 };
 

@@ -1,9 +1,15 @@
 import React from 'react';
 import { Heart, ShoppingCart } from 'lucide-react';
 import { useProducts } from '../hooks/useProducts';
+import { useNavigate } from 'react-router-dom';
 
 const LatestItems = () => {
   const { data: products, isLoading, isError, error } = useProducts({limit: 10 });
+  const navigate = useNavigate();
+
+  const handleProductClick = (productId) => {
+    navigate(`/products/${productId}`);
+  };
   
   return (
     <section className="container mx-auto px-4 py-12 mt-16">
@@ -15,9 +21,9 @@ const LatestItems = () => {
           className="flex flex-col justify-between bg-white border rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-shadow duration-300 relative md:h-70 "
         >
           
-          <img src={item.image} alt={item.title} className="w-full h-48 sm:h-56 md:h-60 object-cover" />
+          <img src={item.image} alt={item.title} className="w-full h-48 sm:h-56 md:h-60 object-cover hover:cursor-pointer" onClick={() => handleProductClick(item.id)}/>
           <div className="p-4 flex flex-col">
-            <h3 className="font-semibold text-base mb-2">{item.title}</h3>
+            <h3 className="font-semibold text-base mb-2 hover:cursor-pointer" onClick={() => handleProductClick(item.id)}>{item.title}</h3>
             <div className="flex justify-between items-center">
               <span className="text-xl font-bold text-blue-600">{`$ ${item.price}`}</span>
               <span className="bg-green-100 text-green-800 text-xs px-2 py-1 rounded">{item?.rating?.rate}</span>

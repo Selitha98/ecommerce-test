@@ -21,7 +21,7 @@ const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
       staleTime: 1000 * 60, // 5 minutes
-      cacheTime: 1000 * 60, // 30 minutes
+      cacheTime: 1000 * 60 * 30, // 30 minutes
     },
   },
 });
@@ -44,9 +44,9 @@ function App() {
                   <Route path="/cart" element={<Cart />} />
                   <Route path="/profile" element={<Profile />} />
                 </Route>
-                <Route path="/product-details" element={<ProductDetails />}>
-                  <Route path=":productId" element={<Products />} />
-                </Route>
+                <Route path="/products" element={<Products />} />
+                <Route path="/products/:productId" element={<ProductDetails />} />
+
                 <Route path="/about-us" element={<AboutUs />} />
                 <Route path="/contact" element={<ContactUs />} />
               </Route>

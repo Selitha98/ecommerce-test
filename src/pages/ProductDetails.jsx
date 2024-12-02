@@ -1,4 +1,7 @@
+import { useParams } from "react-router-dom";
 import Product from "../components/Product";
+import Spinner from "../components/Spinner";
+import { useProductDetails } from "../hooks/useProducts";
 
 // Example usage
 const exampleProduct = {
@@ -27,11 +30,20 @@ const exampleProduct = {
   };
 
 function ProductDetails() {
+  const {productId} = useParams()
+  const { data :productDetails, isLoading} = useProductDetails(productId);
+
+  if (isLoading) {
+    return (
+      <div className="flex justify-center items-center min-h-screen mt-16">
+        <Spinner size={70} />
+      </div>
+    );
+  }
 
   return (
     <div className="p-4 mt-14">
-       <Product product={exampleProduct} />
-       
+       <Product product={productDetails} />
     </div>
   )
 }

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
-import {  ShoppingCart } from "lucide-react";
+import { ShoppingCart } from "lucide-react";
 import Spinner from "../components/Spinner";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { getAllProducts } from "../services/api";
 
 function Products() {
@@ -9,17 +9,18 @@ function Products() {
   const [isLoading, setIsLoading] = useState(true);
   const [isError, setIsError] = useState(false);
   const location = useLocation();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchProducts = async () => {
       try {
         setIsLoading(true);
         const searchParams = new URLSearchParams(location.search);
-        const category = searchParams.get('category');
+        const category = searchParams.get("category");
 
         // Fetch products, passing category if available
-        const fetchedProducts = await getAllProducts({ 
-          category: category || null 
+        const fetchedProducts = await getAllProducts({
+          category: category || null,
         });
 
         setProducts(fetchedProducts);
@@ -34,6 +35,9 @@ function Products() {
     fetchProducts();
   }, [location.search]);
 
+  const handleProductClick = (productId) => {
+    navigate(`/products/${productId}`);
+  };
 
   if (isLoading) {
     return (
@@ -52,10 +56,12 @@ function Products() {
             key={index}
             className="flex flex-col justify-between bg-white border rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-shadow duration-300 relative md:h-70 "
           >
-            
-            <img src={item.image} alt={item.title} className="w-full h-48 sm:h-56 md:h-60 object-cover" />
+            <img src={item.image} alt={item.title} className="w-full h-48 sm:h-56 md:h-60 object-cover hover:cursor-pointer" onClick={() => handleProductClick(item.id)} />
             <div className="p-4 flex flex-col">
-              <h3 className="font-semibold text-base mb-2">{item.title}</h3>
+              <h3 className="font-semibold text-base mb-2 hover:cursor-pointer" onClick={() => handleProductClick(item.id)}>
+                {" "}
+                {item.title}
+              </h3>
               <div className="flex justify-between items-center">
                 <span className="text-xl font-bold text-blue-600">{`$ ${item.price}`}</span>
                 <span className="bg-green-100 text-green-800 text-xs px-2 py-1 rounded">{item?.rating?.rate}</span>
