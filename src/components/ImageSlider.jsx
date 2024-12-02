@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
-import { ShoppingCart, User, Menu, Search, ChevronLeft, ChevronRight } from "lucide-react";
+import {  ChevronLeft, ChevronRight } from "lucide-react";
+import { useProducts } from "../hooks/useProducts";
+
 
 const products = [
   {
@@ -26,6 +28,9 @@ const products = [
 ];
 
 function ImageSlider() {
+  const { data: limitProducts, isLoading, isError, error } = useProducts({ limit: 3 });
+  console.log(limitProducts)
+
   const [currentSlide, setCurrentSlide] = useState(0);
 
   const nextSlide = () => {
@@ -45,7 +50,7 @@ function ImageSlider() {
     <div className="relative w-full min-h-screen overflow-hidden ">
       {/* Slider Images */}
       <div className="absolute inset-0 transition-transform duration-500 ease-in-out" style={{ transform: `translateX(-${currentSlide * 100}%)` }}>
-        {products.map((product, index) => (
+        {limitProducts.map((product, index) => (
           <div
             key={product.id}
             className="absolute w-full h-full flex items-center justify-center"
@@ -55,10 +60,10 @@ function ImageSlider() {
             }}
           >
             <div className="relative w-full h-full">
-              <img src={product.image} alt={product.name} className="w-full h-full object-cover" />
+              <img src={product.image} alt={product.name} className="w-full h-full object-contain" />
               {/* Product Overlay */}
               <div className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-50 text-white p-6">
-                <h2 className="text-2xl font-bold">{product.name}</h2>
+                <h2 className="text-2xl font-bold">{product.title}</h2>
                 <p className="mb-4">{product.description}</p>
                 <div className="flex justify-between items-center">
                   <span className="text-xl font-semibold">${product.price}</span>
