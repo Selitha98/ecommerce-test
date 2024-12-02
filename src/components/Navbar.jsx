@@ -9,7 +9,7 @@ import { useCart } from "../context/CartProvider";
 
 function Navbar() {
   const { isAuthenticated, logout } = useAuth();
-  const { cart } = useCart();
+  const { cart , clearCart} = useCart();
   const { data: productCategories, isLoading, isError } = useProductCategories();
   const navigate = useNavigate();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -28,6 +28,7 @@ function Navbar() {
     }).then((result) => {
       if (result.isConfirmed) {
         logout();
+        clearCart()
       }
     });
   }

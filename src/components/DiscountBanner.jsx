@@ -1,7 +1,9 @@
 import React from 'react';
 import BannerImage from './../assets/images/126800.jpg'
+import { useNavigate } from 'react-router-dom';
 
 const DiscountBanner = () => {
+  const navigate = useNavigate();
   return (
     <section className="relative min-h-screen flex items-center justify-center text-white">
       {/* Background Image */}
@@ -25,7 +27,7 @@ const DiscountBanner = () => {
           Get up to 50% off on selected items
         </p>
         <div className="flex justify-center space-x-6">
-          <button className="bg-white text-blue-600 px-8 py-3 rounded-full 
+          <button onClick={() => navigate('/products')}  className="bg-white text-blue-600 px-8 py-3 rounded-full 
             hover:bg-blue-100 transition shadow-lg hover:shadow-xl">
             Shop Now
           </button>
