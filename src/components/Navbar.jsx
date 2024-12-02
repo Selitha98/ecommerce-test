@@ -1,8 +1,11 @@
 import React, { useState } from "react";
 import { ShoppingCart, User, Menu, Search, ChevronDown } from "lucide-react";
-import { NavLink } from "react-router-dom";
+import { Link, NavLink, useNavigate } from "react-router-dom";
+import { useProductCategories } from "../hooks/useProducts";
 
 function Navbar() {
+  const { data: productCategories, isLoading, isError } = useProductCategories();
+  const navigate = useNavigate()
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [isProductDropdownOpen, setIsProductDropdownOpen] = useState(false);
@@ -17,24 +20,16 @@ function Navbar() {
           {/* Clothes Category */}
           <div>
             <ul className="space-y-2">
-              <li>
-                <NavLink to="/products/men-clothing" className="text-gray-600 hover:text-blue-500 transition-colors">
-                  Men's Clothing
+              {productCategories.map((category, index) => (
+                <li key={index}>
+                <NavLink to={`/products/${category}`} className="text-gray-600 hover:text-blue-500 transition-colors">
+                  {category.toUpperCase()}
                 </NavLink>
               </li>
-              <li>
-                <NavLink to="/products/women-clothing" className="text-gray-600 hover:text-blue-500 transition-colors">
-                  Women's Clothing
-                </NavLink>
-              </li>
-              <li>
-                <NavLink to="/products/kids-clothing" className="text-gray-600 hover:text-blue-500 transition-colors">
-                  Kids' Clothing
-                </NavLink>
-              </li>
+              ))}
+              
             </ul>
           </div>
-
         </div>
       </div>
     );
@@ -52,7 +47,9 @@ function Navbar() {
         <div className="container mx-2 px-6 py-3 flex items-center justify-between space-x-4 max-w-full">
           {/* Logo */}
           <div className="flex items-center flex-shrink-0">
-            <span className="text-xl font-bold text-gray-800 hidden md:block">MyStore</span>
+            <span className="text-xl font-bold text-gray-800 hidden md:block">
+              <Link to={'/'}>ECom</Link>{" "}
+            </span>
           </div>
 
           {/* Mobile Menu Toggle */}
@@ -123,11 +120,11 @@ function Navbar() {
 
           {/* Icons */}
           <div className="flex items-center space-x-4 flex-shrink-0">
-            <button className="relative">
+            <button className="relative" onClick={() =>navigate('/cart')}>
               <ShoppingCart size={24} className="text-gray-600 hover:text-gray-900" />
               <span className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full px-1.5 py-0.5 text-xs">3</span>
             </button>
-            <button>
+            <button onClick={() =>navigate('/profile')}>
               <User size={24} className="text-gray-600 hover:text-gray-900" />
             </button>
           </div>

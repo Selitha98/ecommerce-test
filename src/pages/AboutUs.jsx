@@ -15,8 +15,7 @@ function AboutUs() {
             About <span className="text-indigo-600">Our Company</span>
           </h2>
           <p className="text-gray-700">
-            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aliquid, commodi doloremque, fugiat illum magni minus nisi nulla numquam
-            obcaecati placeat quia, repellat tempore voluptatum.
+          Welcome to E-Com, your one-stop destination for high-quality and affordable products. We are dedicated to providing an exceptional shopping experience by offering a diverse range of items to meet your every need. Our mission is to blend convenience, quality, and customer satisfaction into every interaction. Thank you for choosing us—we’re here to make your shopping journey seamless and enjoyable!
           </p>
         </div>
       </div>
