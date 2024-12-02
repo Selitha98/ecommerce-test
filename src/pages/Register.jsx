@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import BgImage from "../assets/images/bg.webp";
 
 function Register() {
   const [email, setEmail] = useState("");
@@ -41,8 +42,8 @@ function Register() {
     }
 
     // Check if user already exists
-    const existingUsers = JSON.parse(localStorage.getItem('users') || '[]');
-    const userExists = existingUsers.some(user => user.email === email);
+    const existingUsers = JSON.parse(localStorage.getItem("users") || "[]");
+    const userExists = existingUsers.some((user) => user.email === email);
 
     if (userExists) {
       toast.error("User with this email already exists");
@@ -55,43 +56,44 @@ function Register() {
       id: Date.now(), // unique identifier
       email,
       password,
-      createdAt: new Date().toISOString()
+      createdAt: new Date().toISOString(),
     };
 
     // Add new user to local storage
     const updatedUsers = [...existingUsers, newUser];
-    localStorage.setItem('users', JSON.stringify(updatedUsers));
+    localStorage.setItem("users", JSON.stringify(updatedUsers));
 
     // Show success message and redirect
     toast.success("Account created successfully!");
-    
+
     // Optional: redirect to login page
-    navigate('/login');
+    navigate("/login");
 
     setIsLoading(false);
   };
 
   return (
-    <section className="bg-gray-50 dark:bg-gray-900">
+    <section
+      className="bg-gray-50 dark:bg-gray-900 relative min-h-screen"
+      style={{
+        backgroundImage: `
+        linear-gradient(to bottom, rgba(0,0,0,0.3), rgba(0,0,0,0.7)),
+        url(${BgImage})
+      `,
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+        backgroundBlendMode: "multiply",
+      }}
+    >
       <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
-        <a href="#" className="flex items-center mb-6 text-2xl font-semibold text-gray-900 dark:text-white">
-          <img className="w-8 h-8 mr-2" src="https://flowbite.s3.amazonaws.com/blocks/marketing-ui/logo.svg" alt="logo" />
-          Flowbite
-        </a>
         <div className="w-full bg-white rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700">
           <div className="p-6 space-y-4 md:space-y-6 sm:p-8">
-            <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
+            <h1 className="text-xl text-center font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
               Create an account
             </h1>
-            <form 
-              className="space-y-4 md:space-y-6" 
-              onSubmit={handleSubmit}
-            >
+            <form className="space-y-4 md:space-y-6" onSubmit={handleSubmit}>
               <div>
-                <label 
-                  htmlFor="email" 
-                  className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                >
+                <label htmlFor="email" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
                   Your email
                 </label>
                 <input
@@ -106,10 +108,7 @@ function Register() {
                 />
               </div>
               <div>
-                <label 
-                  htmlFor="password" 
-                  className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                >
+                <label htmlFor="password" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
                   Password
                 </label>
                 <input
@@ -125,10 +124,7 @@ function Register() {
                 />
               </div>
               <div>
-                <label 
-                  htmlFor="confirm-password" 
-                  className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                >
+                <label htmlFor="confirm-password" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
                   Confirm password
                 </label>
                 <input
@@ -156,15 +152,9 @@ function Register() {
                   />
                 </div>
                 <div className="ml-3 text-sm">
-                  <label 
-                    htmlFor="terms" 
-                    className="font-light text-gray-500 dark:text-gray-300"
-                  >
+                  <label htmlFor="terms" className="font-light text-gray-500 dark:text-gray-300">
                     I accept the{" "}
-                    <a 
-                      href="#" 
-                      className="font-medium text-primary-600 hover:underline dark:text-primary-500"
-                    >
+                    <a href="#" className="font-medium text-primary-600 hover:underline dark:text-primary-500">
                       Terms and Conditions
                     </a>
                   </label>
@@ -174,17 +164,14 @@ function Register() {
                 type="submit"
                 disabled={isLoading}
                 className={`w-full text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800 ${
-                  isLoading ? 'opacity-50 cursor-not-allowed' : ''
+                  isLoading ? "opacity-50 cursor-not-allowed" : ""
                 }`}
               >
-                {isLoading ? 'Creating Account...' : 'Create an account'}
+                {isLoading ? "Creating Account..." : "Create an account"}
               </button>
               <p className="text-sm font-light text-gray-500 dark:text-gray-400">
                 Already have an account?{" "}
-                <Link 
-                  to={'/login'} 
-                  className="font-medium text-primary-600 hover:underline dark:text-primary-500"
-                >
+                <Link to={"/login"} className="font-medium text-primary-600 hover:underline dark:text-primary-500">
                   Login here
                 </Link>
               </p>

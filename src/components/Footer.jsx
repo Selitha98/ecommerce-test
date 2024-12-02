@@ -24,7 +24,7 @@ const Footer = () => {
         <div>
           <h4 className="text-xl font-bold mb-4">Shop</h4>
           <ul>
-            {productCategories.map((category, index) => (
+            {productCategories?.map((category, index) => (
               <li key={index} className="mb-2 hover:text-blue-300 cursor-pointer">
                 <Link to={`/products?category=${category}`}>{category.toUpperCase()}</Link>
               </li>
