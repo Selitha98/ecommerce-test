@@ -1,14 +1,34 @@
 import React, { useState } from "react";
-import { ShoppingCart, User, Menu, Search, ChevronDown } from "lucide-react";
+import { ShoppingCart, User, Menu, Search, ChevronDown, LogIn } from "lucide-react";
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import { useProductCategories } from "../hooks/useProducts";
+import { useAuth } from "../context/AuthContext";
+import { Logout } from "@mui/icons-material";
+import Swal from "sweetalert2";
 
 function Navbar() {
+  const { isAuthenticated, logout } = useAuth();
   const { data: productCategories, isLoading, isError } = useProductCategories();
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [isProductDropdownOpen, setIsProductDropdownOpen] = useState(false);
+  console.log(isAuthenticated);
+
+  function handleLogout() {
+    Swal.fire({
+      title: "Are you want to logout ?",
+      showConfirmButton: true,
+      showCancelButton: true,
+      confirmButtonText: "OK",
+      cancelButtonText: "Cancel",
+      icon: "question",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        logout();
+      }
+    });
+  }
 
   const ProductDropdown = () => {
     return (
@@ -22,12 +42,11 @@ function Navbar() {
             <ul className="space-y-2">
               {productCategories.map((category, index) => (
                 <li key={index}>
-                <NavLink to={`/products?category=${category}`} className="text-gray-600 hover:text-blue-500 transition-colors">
-                  {category.toUpperCase()}
-                </NavLink>
-              </li>
+                  <NavLink to={`/products?category=${category}`} className="text-gray-600 hover:text-blue-500 transition-colors">
+                    {category.toUpperCase()}
+                  </NavLink>
+                </li>
               ))}
-              
             </ul>
           </div>
         </div>
@@ -48,7 +67,7 @@ function Navbar() {
           {/* Logo */}
           <div className="flex items-center flex-shrink-0">
             <span className="text-xl font-bold text-gray-800 hidden md:block">
-              <Link to={'/'}>ECom</Link>{" "}
+              <Link to={"/"}>ECom</Link>{" "}
             </span>
           </div>
 
@@ -120,13 +139,24 @@ function Navbar() {
 
           {/* Icons */}
           <div className="flex items-center space-x-4 flex-shrink-0">
-            <button className="relative" onClick={() =>navigate('/cart')}>
+            <button className="relative" onClick={() => navigate("/cart")}>
               <ShoppingCart size={24} className="text-gray-600 hover:text-gray-900" />
               <span className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full px-1.5 py-0.5 text-xs">3</span>
             </button>
-            <button onClick={() =>navigate('/profile')}>
-              <User size={24} className="text-gray-600 hover:text-gray-900" />
-            </button>
+            {isAuthenticated ? (
+              <>
+                <button onClick={() => navigate("/profile")}>
+                  <User size={24} className="text-gray-600 hover:text-gray-900" />
+                </button>
+                <button onClick={handleLogout}>
+                  <Logout size={24} className="text-gray-600 hover:text-gray-900" />
+                </button>
+              </>
+            ) : (
+              <button onClick={() => navigate("/login")}>
+                <LogIn size={24} className="text-gray-600 hover:text-gray-900" />
+              </button>
+            )}
           </div>
         </div>
 

@@ -20,12 +20,11 @@ import ProtectedRoute from "./auth/ProtectedRoute";
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      staleTime: 1000 * 60 , // 5 minutes
-      cacheTime: 1000 * 60 , // 30 minutes
-    }
-  }
+      staleTime: 1000 * 60, // 5 minutes
+      cacheTime: 1000 * 60, // 30 minutes
+    },
+  },
 });
-
 
 function App() {
   return (
@@ -45,8 +44,9 @@ function App() {
                   <Route path="/cart" element={<Cart />} />
                   <Route path="/profile" element={<Profile />} />
                 </Route>
-                <Route path="/product-details" element={<ProductDetails />} />
-                <Route path="/products" element={<Products />} />
+                <Route path="/product-details" element={<ProductDetails />}>
+                  <Route path=":productId" element={<Products />} />
+                </Route>
                 <Route path="/about-us" element={<AboutUs />} />
                 <Route path="/contact" element={<ContactUs />} />
               </Route>
