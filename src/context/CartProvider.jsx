@@ -61,7 +61,6 @@ export const CartProvider = ({ children }) => {
 
   const clearCart = () => {
     setCart([]);
-    toast.info('Cart has been cleared');
   };
 
   return (
