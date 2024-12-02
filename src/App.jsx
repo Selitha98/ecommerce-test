@@ -35,11 +35,10 @@ function App() {
           <div className="flex flex-col min-h-screen">
             <Router>
               <Routes>
-                {/* Login and Register routes without Navbar/Footer */}
+                
                 <Route path="/login" element={<Login />} />
                 <Route path="/register" element={<Register />} />
 
-                {/* Protected Routes with Navbar and Footer */}
                 <Route element={<LayoutWithNavbarFooter />}>
                   <Route path="/" element={<Home />} />
                   <Route element={<ProtectedRoute />}>

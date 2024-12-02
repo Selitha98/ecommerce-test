@@ -1,32 +1,34 @@
-import React from 'react';
-import { Facebook, Twitter, Instagram, Linkedin } from 'lucide-react';
+import React from "react";
+import { Facebook, Twitter, Instagram, Linkedin } from "lucide-react";
+import { useProductCategories } from "../hooks/useProducts";
+import { Link } from "react-router-dom";
 
 const Footer = () => {
+  const { data: productCategories, isLoading, isError } = useProductCategories();
   return (
     <footer className=" bg-gray-900 text-white py-12">
       <div className="container mx-auto px-4 grid grid-cols-4 gap-8">
         <div>
-          <h4 className="text-xl font-bold mb-4">About Us</h4>
-          <ul>
-            <li className="mb-2 hover:text-blue-300 cursor-pointer">Our Story</li>
-            <li className="mb-2 hover:text-blue-300 cursor-pointer">Careers</li>
-            <li className="mb-2 hover:text-blue-300 cursor-pointer">Press</li>
-          </ul>
+          <h4 className="text-xl font-bold mb-4">
+            <Link to={`/about-us`}>About Us</Link>
+          </h4>
         </div>
         <div>
           <h4 className="text-xl font-bold mb-4">Customer Service</h4>
           <ul>
-            <li className="mb-2 hover:text-blue-300 cursor-pointer">Contact</li>
-            <li className="mb-2 hover:text-blue-300 cursor-pointer">Shipping</li>
-            <li className="mb-2 hover:text-blue-300 cursor-pointer">Returns</li>
+            <li className="mb-2 hover:text-blue-300 cursor-pointer">
+              <Link to={`/contact`}>Contact Us</Link>
+            </li>
           </ul>
         </div>
         <div>
           <h4 className="text-xl font-bold mb-4">Shop</h4>
           <ul>
-            <li className="mb-2 hover:text-blue-300 cursor-pointer">Men</li>
-            <li className="mb-2 hover:text-blue-300 cursor-pointer">Women</li>
-            <li className="mb-2 hover:text-blue-300 cursor-pointer">Kids</li>
+            {productCategories.map((category, index) => (
+              <li key={index} className="mb-2 hover:text-blue-300 cursor-pointer">
+                <Link to={`/products?category=${category}`}>{category.toUpperCase()}</Link>
+              </li>
+            ))}
           </ul>
         </div>
         <div>
@@ -38,14 +40,8 @@ const Footer = () => {
             <Linkedin className="hover:text-blue-600 cursor-pointer" />
           </div>
           <div className="mt-4">
-            <input 
-              type="email" 
-              placeholder="Subscribe to our newsletter" 
-              className="w-full p-2 rounded bg-gray-800 text-white"
-            />
-            <button className="mt-2 w-full bg-blue-600 py-2 rounded hover:bg-blue-700">
-              Subscribe
-            </button>
+            <input type="email" placeholder="Subscribe to our newsletter" className="w-full p-2 rounded bg-gray-800 text-white" />
+            <button className="mt-2 w-full bg-blue-600 py-2 rounded hover:bg-blue-700">Subscribe</button>
           </div>
         </div>
       </div>
