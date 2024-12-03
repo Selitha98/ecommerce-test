@@ -26,6 +26,7 @@ function Navbar() {
       icon: "question",
     }).then((result) => {
       if (result.isConfirmed) {
+        navigate('/')
         logout();
         clearCart();
       }
