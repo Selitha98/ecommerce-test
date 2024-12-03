@@ -1,37 +1,56 @@
 import React, { useEffect, useState } from "react";
-import { ChevronDown, ShoppingCart } from "lucide-react";
+import { ShoppingCart } from "lucide-react";
 import Spinner from "../components/Spinner";
 import { useLocation, useNavigate } from "react-router-dom";
 import { getAllProducts } from "../services/api";
 import { useCart } from "../context/CartProvider";
+import { useProductCategories } from "../hooks/useProducts";
 
 function Products() {
+  const { data: productCategories } = useProductCategories();
   const [products, setProducts] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isError, setIsError] = useState(false);
-  const [sortOrder, setSortOrder] = useState("asc");
   const location = useLocation();
   const { addToCart } = useCart();
   const navigate = useNavigate();
+  const [selectedCategory, setSelectedCategory] = useState("");
+  const [sortOption, setSortOption] = useState("name-asc");
+
 
   useEffect(() => {
     const fetchProducts = async () => {
       try {
         setIsLoading(true);
         const searchParams = new URLSearchParams(location.search);
-        const category = searchParams.get("category");
-        const titleQuery = searchParams.get("title");
-        const sort = searchParams.get("sort") || "asc";
+        
+        const category = searchParams.get("category") || "";
+        const sort = searchParams.get("sort") || "name-asc";
 
-        // Fetch products, passing category if available
-        let fetchedProducts = await getAllProducts({
-          category: category || null,
-          sort: sort,
-        });
+        setSelectedCategory(category);
+        setSortOption(sort);
 
-        if (titleQuery) {
-          fetchedProducts = fetchedProducts.filter((item) => item.title.toLowerCase().includes(titleQuery.toLowerCase()));
+        // Fetch all products
+        let fetchedProducts = await getAllProducts();
+
+        if (category) {
+          fetchedProducts = fetchedProducts.filter(
+            product => product.category === category
+          );
         }
+
+        fetchedProducts.sort((a, b) => {
+          const [sortField, sortDirection] = sort.split('-');
+          let comparison = 0;
+
+          if (sortField === 'price') {
+            comparison = a.price - b.price;
+          } else {
+            comparison = a.title.localeCompare(b.title);
+          }
+
+          return sortDirection === 'asc' ? comparison : -comparison;
+        });
 
         setProducts(fetchedProducts);
         setIsLoading(false);
@@ -61,12 +80,30 @@ function Products() {
     navigate(`/products/${productId}`);
   };
 
-  // Handle sorting change
-  const handleSortChange = (newSort) => {
-    setSortOrder(newSort);
+  const updateUrlParams = (category, sort) => {
     const searchParams = new URLSearchParams(location.search);
-    searchParams.set("sort", newSort);
-    navigate(`?${searchParams.toString()}`);
+    
+    if (category) {
+      searchParams.set("category", category);
+    } else {
+      searchParams.delete("category");
+    }
+
+    searchParams.set("sort", sort);
+
+    navigate(`?${searchParams.toString()}`, { replace: true });
+  };
+
+  const handleCategoryChange = (e) => {
+    const category = e.target.value;
+    setSelectedCategory(category);
+    updateUrlParams(category, sortOption);
+  };
+
+  const handleSortChange = (e) => {
+    const sort = e.target.value;
+    setSortOption(sort);
+    updateUrlParams(selectedCategory, sort);
   };
 
   if (isLoading) {
@@ -80,21 +117,34 @@ function Products() {
   return (
     <section className="container mx-auto px-4 py-12 mt-16">
       <div className="flex justify-between items-center mb-8">
-        <h2 className="text-3xl font-bold">All Products</h2>
+        <h2 className="text-3xl font-bold">
+          All Products
+          <span className="text-base ml-4 text-gray-600">({products.length} items)</span>
+        </h2>
 
-        {/* Sort Dropdown */}
-        <div className="relative flex items-center gap-2">
-          <label htmlFor="sorting">Sort by title:</label>
+        <div className="flex items-center space-x-4">
+
+          {/* Categoriess */}
           <select
-            id="sorting"
-            value={sortOrder}
-            onChange={(e) => handleSortChange(e.target.value)}
-            className="appearance-none py-2 px-8 border rounded-md cursor-pointer"
+            value={selectedCategory}
+            onChange={handleCategoryChange}
+            className="appearance-none py-2 px-4 border rounded-md cursor-pointer mr-2"
           >
-            <option value="asc">A to Z</option>
-            <option value="desc">Z to A</option>
+            <option value="">All Categories</option>
+            {productCategories?.map((category) => (
+              <option key={category} value={category}>
+                {category}
+              </option>
+            ))}
           </select>
-          <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 pointer-events-none" size={20} />
+
+          {/* Sorting */}
+          <select value={sortOption} onChange={handleSortChange} className="appearance-none py-2 px-4 border rounded-md cursor-pointer">
+            <option value="name-asc">Name (A to Z)</option>
+            <option value="name-desc">Name (Z to A)</option>
+            <option value="price-asc">Price (Low to High)</option>
+            <option value="price-desc">Price (High to Low)</option>
+          </select>
         </div>
       </div>
       <div className="grid  gap-6 sm:grid-cols-2  md:grid-cols-4 lg:grid-cols-5">
