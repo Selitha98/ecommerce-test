@@ -1,15 +1,13 @@
 import React from "react";
-import { useUserById } from "../hooks/useUsers";
-import Spinner from "../components/Spinner";
-import { Calendar, Edit, Mail, MapPin, Phone, User } from "lucide-react";
+import { User, Mail, Phone, MapPin, Calendar, Edit } from "lucide-react";
 
 function Profile() {
-  const { data: userData, isLoading, isError } = useUserById();
+  const userData = JSON.parse(localStorage.getItem("user"));
 
-  if (isLoading) {
+  if (!userData) {
     return (
       <div className="flex justify-center items-center min-h-screen mt-16">
-        <Spinner size={70} />
+        <p>No user data found. Please log in.</p>
       </div>
     );
   }
@@ -18,7 +16,6 @@ function Profile() {
     <section className="py-10 dark:bg-gray-900 mt-16">
       <div className="container mx-auto px-4">
         <div className="bg-white dark:bg-gray-800 shadow-xl rounded-2xl max-w-2xl mx-auto">
-          {/* Profile Header */}
           <div className="relative">
             <div className="h-48 bg-gradient-to-r from-blue-500 to-purple-600 rounded-t-2xl" />
             <div className="absolute -bottom-16 left-1/2 transform -translate-x-1/2">
@@ -28,14 +25,12 @@ function Profile() {
             </div>
           </div>
 
-          {/* Profile Content */}
           <div className="pt-20 pb-10 px-6 text-center">
             <h1 className="text-2xl font-bold dark:text-white capitalize">
-              {userData.name.firstname} {userData.name.lastname}
+              {userData.firstName} {userData.lastName}
             </h1>
-            <p className="text-gray-600 dark:text-gray-300 mt-2">@{userData.username}</p>
+            <p className="text-gray-600 dark:text-gray-300 mt-2">@{userData.email.split("@")[0]}</p>
 
-            {/* Profile Details */}
             <div className="grid md:grid-cols-2 gap-6 mt-8">
               <div className="bg-gray-100 dark:bg-gray-700 p-4 rounded-lg flex items-center">
                 <Mail className="mr-4 text-blue-500" />
@@ -49,7 +44,7 @@ function Profile() {
                 <Phone className="mr-4 text-green-500" />
                 <div>
                   <h3 className="font-semibold dark:text-white">Phone</h3>
-                  <p className="text-gray-600 dark:text-gray-300">{userData.phone}</p>
+                  <p className="text-gray-600 dark:text-gray-300">{userData.phoneNumber}</p>
                 </div>
               </div>
 
@@ -58,7 +53,7 @@ function Profile() {
                 <div>
                   <h3 className="font-semibold dark:text-white">Address</h3>
                   <p className="text-gray-600 dark:text-gray-300">
-                    {userData.address.street} {userData.address.number},{userData.address.city} {userData.address.zipcode}
+                    {userData.address.street}, {userData.address.city}, {userData.address.state} {userData.address.zipCode}
                   </p>
                 </div>
               </div>
@@ -66,15 +61,11 @@ function Profile() {
               <div className="bg-gray-100 dark:bg-gray-700 p-4 rounded-lg flex items-center">
                 <Calendar className="mr-4 text-purple-500" />
                 <div>
-                  <h3 className="font-semibold dark:text-white">Geolocation</h3>
-                  <p className="text-gray-600 dark:text-gray-300">
-                    Lat: {userData.address.geolocation.lat}, Long: {userData.address.geolocation.long}
-                  </p>
+                  <h3 className="font-semibold dark:text-white">Account Created</h3>
+                  <p className="text-gray-600 dark:text-gray-300">{new Date(userData.createdAt).toLocaleDateString()}</p>
                 </div>
               </div>
             </div>
-
-           
           </div>
         </div>
       </div>

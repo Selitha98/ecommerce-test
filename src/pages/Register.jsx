@@ -1,185 +1,273 @@
-import React, { useState } from "react";
+import React from "react";
+import { Formik, Form, Field, ErrorMessage } from "formik";
+import * as Yup from "yup";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import BgImage from "../assets/images/bg.webp";
 
-function Register() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [termsAccepted, setTermsAccepted] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
+const RegisterSchema = Yup.object().shape({
+  email: Yup.string().email("Invalid email address").required("Email is required"),
+  password: Yup.string().min(6, "Password must be at least 6 characters").required("Password is required"),
+  confirmPassword: Yup.string()
+    .oneOf([Yup.ref("password"), null], "Passwords must match")
+    .required("Confirm password is required"),
+  firstName: Yup.string().required("First name is required"),
+  lastName: Yup.string().required("Last name is required"),
+  phoneNumber: Yup.string()
+    .matches(/^[0-9]{10}$/, "Phone number must be 10 digits")
+    .required("Phone number is required"),
+  address: Yup.object().shape({
+    street: Yup.string().required("Street address is required"),
+    city: Yup.string().required("City is required"),
+    state: Yup.string().required("State is required"),
+    zipCode: Yup.string()
+      .matches(/^[0-9]{5}$/, "Zip code must be 5 digits")
+      .required("Zip code is required"),
+  }),
+  termsAccepted: Yup.boolean().oneOf([true], "Please accept the terms and conditions"),
+});
 
+function Register() {
   const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    setIsLoading(true);
-
-    // Validation checks
-    if (!email) {
-      toast.error("Email is required");
-      setIsLoading(false);
-      return;
-    }
-
-    if (password.length < 6) {
-      toast.error("Password must be at least 6 characters long");
-      setIsLoading(false);
-      return;
-    }
-
-    if (password !== confirmPassword) {
-      toast.error("Passwords do not match");
-      setIsLoading(false);
-      return;
-    }
-
-    if (!termsAccepted) {
-      toast.error("Please accept the terms and conditions");
-      setIsLoading(false);
-      return;
-    }
-
-    // Check if user already exists
+  const handleSubmit = (values, { setSubmitting }) => {
     const existingUsers = JSON.parse(localStorage.getItem("users") || "[]");
-    const userExists = existingUsers.some((user) => user.email === email);
+    const userExists = existingUsers.some((user) => user.email === values.email);
 
     if (userExists) {
       toast.error("User with this email already exists");
-      setIsLoading(false);
+      setSubmitting(false);
       return;
     }
 
     // Create new user
     const newUser = {
-      id: Date.now(), // unique identifier
-      email,
-      password,
+      id: Date.now(), 
+      email: values.email,
+      firstName: values.firstName,
+      lastName: values.lastName,
+      phoneNumber: values.phoneNumber,
+      address: values.address,
+      password: values.password,
       createdAt: new Date().toISOString(),
     };
 
-    // Add new user to local storage
+    // Add user to local storage
     const updatedUsers = [...existingUsers, newUser];
     localStorage.setItem("users", JSON.stringify(updatedUsers));
 
-    // Show success message and redirect
+    //  redirect
     toast.success("Account created successfully!");
-
-    // Optional: redirect to login page
     navigate("/login");
-
-    setIsLoading(false);
+    setSubmitting(false);
   };
 
   return (
-    <section
-      className="bg-gray-50 dark:bg-gray-900 relative min-h-screen"
-      style={{
-        backgroundImage: `
-        linear-gradient(to bottom, rgba(0,0,0,0.3), rgba(0,0,0,0.7)),
-        url(${BgImage})
-      `,
-        backgroundSize: "cover",
-        backgroundPosition: "center",
-        backgroundBlendMode: "multiply",
-      }}
-    >
-      <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
-        <div className="w-full bg-white rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700">
-          <div className="p-6 space-y-4 md:space-y-6 sm:p-8">
-            <h1 className="text-xl text-center font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
-              Create an account
-            </h1>
-            <form className="space-y-4 md:space-y-6" onSubmit={handleSubmit}>
-              <div>
-                <label htmlFor="email" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-                  Your email
-                </label>
-                <input
-                  type="email"
-                  name="email"
-                  id="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                  placeholder="name@company.com"
-                  required
-                />
-              </div>
-              <div>
-                <label htmlFor="password" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-                  Password
-                </label>
-                <input
-                  type="password"
-                  name="password"
-                  id="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  placeholder="••••••••"
-                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                  required
-                  minLength={6}
-                />
-              </div>
-              <div>
-                <label htmlFor="confirm-password" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-                  Confirm password
-                </label>
-                <input
-                  type="password"
-                  name="confirm-password"
-                  id="confirm-password"
-                  value={confirmPassword}
-                  onChange={(e) => setConfirmPassword(e.target.value)}
-                  placeholder="••••••••"
-                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                  required
-                  minLength={6}
-                />
-              </div>
-              <div className="flex items-start">
-                <div className="flex items-center h-5">
-                  <input
-                    id="terms"
-                    aria-describedby="terms"
-                    type="checkbox"
-                    checked={termsAccepted}
-                    onChange={(e) => setTermsAccepted(e.target.checked)}
-                    className="w-4 h-4 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-primary-300 dark:bg-gray-700 dark:border-gray-600 dark:focus:ring-primary-600 dark:ring-offset-gray-800"
-                    required
-                  />
+    <div className="min-h-screen bg-gray-100 flex flex-col md:flex-row">
+      {/*  Image */}
+      <div className="hidden md:block md:w-1/2 bg-primary-50 md:flex items-center justify-center p-10">
+        <img
+          src="https://storage.googleapis.com/devitary-image-host.appspot.com/15848031292911696601-undraw_designer_life_w96d.svg"
+          alt="Designer lifestyle illustration"
+          className="max-w-full max-h-[80vh] object-contain"
+        />
+      </div>
+
+      <div className="w-full md:w-1/2 flex items-center justify-center p-6 bg-white">
+        <div className="w-full max-w-md max-h-[90vh] overflow-y-auto pr-4 scrollbar-hide">
+          <h1 className="text-2xl font-bold text-center mb-6 text-gray-900">Create an account</h1>
+
+          <Formik
+            initialValues={{
+              email: "",
+              password: "",
+              confirmPassword: "",
+              firstName: "",
+              lastName: "",
+              phoneNumber: "",
+              address: {
+                street: "",
+                city: "",
+                state: "",
+                zipCode: "",
+              },
+              termsAccepted: false,
+            }}
+            validationSchema={RegisterSchema}
+            onSubmit={handleSubmit}
+          >
+            {({ isSubmitting }) => (
+              <Form className="space-y-4">
+                <div className="grid md:grid-cols-2 md:gap-4">
+                  <div>
+                    <label htmlFor="firstName" className="block mb-2 text-sm font-medium text-gray-700">
+                      First Name
+                    </label>
+                    <Field
+                      type="text"
+                      name="firstName"
+                      placeholder="John"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                    />
+                    <ErrorMessage name="firstName" component="div" className="text-red-500 text-sm mt-1" />
+                  </div>
+                  <div>
+                    <label htmlFor="lastName" className="block mb-2 text-sm font-medium text-gray-700">
+                      Last Name
+                    </label>
+                    <Field
+                      type="text"
+                      name="lastName"
+                      placeholder="Doe"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                    />
+                    <ErrorMessage name="lastName" component="div" className="text-red-500 text-sm mt-1" />
+                  </div>
                 </div>
-                <div className="ml-3 text-sm">
-                  <label htmlFor="terms" className="font-light text-gray-500 dark:text-gray-300">
-                    I accept the{" "}
-                    <a href="#" className="font-medium text-primary-600 hover:underline dark:text-primary-500">
-                      Terms and Conditions
-                    </a>
+
+                <div>
+                  <label htmlFor="email" className="block mb-2 text-sm font-medium text-gray-700">
+                    Email
                   </label>
+                  <Field
+                    type="email"
+                    name="email"
+                    placeholder="name@company.com"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                  />
+                  <ErrorMessage name="email" component="div" className="text-red-500 text-sm mt-1" />
                 </div>
-              </div>
-              <button
-                type="submit"
-                disabled={isLoading}
-                className={`w-full text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800 ${
-                  isLoading ? "opacity-50 cursor-not-allowed" : ""
-                }`}
-              >
-                {isLoading ? "Creating Account..." : "Create an account"}
-              </button>
-              <p className="text-sm font-light text-gray-500 dark:text-gray-400">
-                Already have an account?{" "}
-                <Link to={"/login"} className="font-medium text-primary-600 hover:underline dark:text-primary-500">
-                  Login here
-                </Link>
-              </p>
-            </form>
-          </div>
+
+                <div>
+                  <label htmlFor="phoneNumber" className="block mb-2 text-sm font-medium text-gray-700">
+                    Phone Number
+                  </label>
+                  <Field
+                    type="tel"
+                    name="phoneNumber"
+                    placeholder="1234567890"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                  />
+                  <ErrorMessage name="phoneNumber" component="div" className="text-red-500 text-sm mt-1" />
+                </div>
+
+                <div className="grid md:grid-cols-2 md:gap-4">
+                  <div>
+                    <label htmlFor="address.street" className="block mb-2 text-sm font-medium text-gray-700">
+                      Street Address
+                    </label>
+                    <Field
+                      type="text"
+                      name="address.street"
+                      placeholder="123 Main St"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                    />
+                    <ErrorMessage name="address.street" component="div" className="text-red-500 text-sm mt-1" />
+                  </div>
+                  <div>
+                    <label htmlFor="address.city" className="block mb-2 text-sm font-medium text-gray-700">
+                      City
+                    </label>
+                    <Field
+                      type="text"
+                      name="address.city"
+                      placeholder="New York"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                    />
+                    <ErrorMessage name="address.city" component="div" className="text-red-500 text-sm mt-1" />
+                  </div>
+                </div>
+
+                <div className="grid md:grid-cols-2 md:gap-4">
+                  <div>
+                    <label htmlFor="address.state" className="block mb-2 text-sm font-medium text-gray-700">
+                      State
+                    </label>
+                    <Field
+                      type="text"
+                      name="address.state"
+                      placeholder="NY"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                    />
+                    <ErrorMessage name="address.state" component="div" className="text-red-500 text-sm mt-1" />
+                  </div>
+                  <div>
+                    <label htmlFor="address.zipCode" className="block mb-2 text-sm font-medium text-gray-700">
+                      Zip Code
+                    </label>
+                    <Field
+                      type="text"
+                      name="address.zipCode"
+                      placeholder="10001"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                    />
+                    <ErrorMessage name="address.zipCode" component="div" className="text-red-500 text-sm mt-1" />
+                  </div>
+                </div>
+
+                <div>
+                  <label htmlFor="password" className="block mb-2 text-sm font-medium text-gray-700">
+                    Password
+                  </label>
+                  <Field
+                    type="password"
+                    name="password"
+                    placeholder="••••••••"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                  />
+                  <ErrorMessage name="password" component="div" className="text-red-500 text-sm mt-1" />
+                </div>
+
+                <div>
+                  <label htmlFor="confirmPassword" className="block mb-2 text-sm font-medium text-gray-700">
+                    Confirm Password
+                  </label>
+                  <Field
+                    type="password"
+                    name="confirmPassword"
+                    placeholder="••••••••"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                  />
+                  <ErrorMessage name="confirmPassword" component="div" className="text-red-500 text-sm mt-1" />
+                </div>
+
+                <div className="flex items-start">
+                  <div className="flex items-center h-5">
+                    <Field type="checkbox" name="termsAccepted" className="w-4 h-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded" />
+                  </div>
+                  <div className="ml-3 text-sm">
+                    <label htmlFor="termsAccepted" className="font-light text-gray-700">
+                      I accept the{" "}
+                      <a href="#" className="font-medium text-primary-600 hover:underline">
+                        Terms and Conditions
+                      </a>
+                    </label>
+                  </div>
+                </div>
+                <ErrorMessage name="termsAccepted" component="div" className="text-red-500 text-sm mt-1" />
+
+                <button
+                  type="submit"
+                  disabled={isSubmitting}
+                  className={`w-full py-2 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 ${
+                    isSubmitting ? "opacity-50 cursor-not-allowed" : ""
+                  }`}
+                >
+                  {isSubmitting ? "Creating Account..." : "Create an account"}
+                </button>
+
+                <p className="text-center text-sm text-gray-600 mt-4">
+                  Already have an account?{" "}
+                  <Link to="/login" className="font-medium text-primary-600 hover:underline">
+                    Login here
+                  </Link>
+                </p>
+              </Form>
+            )}
+          </Formik>
         </div>
       </div>
-    </section>
+    </div>
   );
 }
 
