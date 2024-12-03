@@ -1,22 +1,24 @@
-import React, { useState } from "react";
+import React, { lazy, Suspense } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import { QueryClient, QueryClientProvider } from "react-query";
 import "react-toastify/dist/ReactToastify.css";
 
-import Home from "./pages/Home";
-import Login from "./pages/Login";
-import Register from "./pages/Register";
-import Cart from "./pages/Cart";
-import Products from "./pages/Products";
-import ProductDetails from "./pages/ProductDetails";
-import AboutUs from "./pages/AboutUs";
-import ContactUs from "./pages/ContactUs";
-import Profile from "./pages/Profile";
-import LayoutWithNavbarFooter from "./components/LayoutWithNavbarFooter";
+const Home = lazy(() => import("./pages/Home"));
+const Login = lazy(() => import("./pages/Login"));
+const Register = lazy(() => import("./pages/Register"));
+const Cart = lazy(() => import("./pages/Cart"));
+const Products = lazy(() => import("./pages/Products"));
+const ProductDetails = lazy(() => import("./pages/ProductDetails"));
+const AboutUs = lazy(() => import("./pages/AboutUs"));
+const ContactUs = lazy(() => import("./pages/ContactUs"));
+const Profile = lazy(() => import("./pages/Profile"));
+const LayoutWithNavbarFooter = lazy(() => import("./components/LayoutWithNavbarFooter"));
+const ProtectedRoute = lazy(() => import("./auth/ProtectedRoute"));
+
 import { AuthProvider } from "./context/AuthContext";
-import ProtectedRoute from "./auth/ProtectedRoute";
 import { CartProvider } from "./context/CartProvider";
+import Spinner from "./components/Spinner";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -30,45 +32,48 @@ const queryClient = new QueryClient({
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <AuthProvider>
-        <CartProvider>
-          <div className="flex flex-col min-h-screen">
-            <Router>
-              <Routes>
-                
-                <Route path="/login" element={<Login />} />
-                <Route path="/register" element={<Register />} />
+      <React.Suspense fallback={<Spinner />}>
+        <AuthProvider>
+          <CartProvider>
+            <div className="flex flex-col min-h-screen">
+              <Router>
+                <Suspense fallback={<Spinner />}>
+                  <Routes>
+                    <Route path="/login" element={<Login />} />
+                    <Route path="/register" element={<Register />} />
 
-                <Route element={<LayoutWithNavbarFooter />}>
-                  <Route path="/" element={<Home />} />
-                  <Route element={<ProtectedRoute />}>
-                    <Route path="/cart" element={<Cart />} />
-                    <Route path="/profile" element={<Profile />} />
-                  </Route>
-                  <Route path="/products" element={<Products />} />
-                  <Route path="/products/:productId" element={<ProductDetails />} />
+                    <Route element={<LayoutWithNavbarFooter />}>
+                      <Route path="/" element={<Home />} />
+                      <Route element={<ProtectedRoute />}>
+                        <Route path="/cart" element={<Cart />} />
+                        <Route path="/profile" element={<Profile />} />
+                      </Route>
+                      <Route path="/products" element={<Products />} />
+                      <Route path="/products/:productId" element={<ProductDetails />} />
 
-                  <Route path="/about-us" element={<AboutUs />} />
-                  <Route path="/contact" element={<ContactUs />} />
-                </Route>
-              </Routes>
-            </Router>
-            <ToastContainer
-              position="top-right"
-              autoClose={2000}
-              hideProgressBar={false}
-              newestOnTop={false}
-              closeOnClick
-              rtl={false}
-              pauseOnFocusLoss
-              draggable
-              pauseOnHover
-              theme="light"
-              transition:Bounce
-            />
-          </div>
-        </CartProvider>
-      </AuthProvider>
+                      <Route path="/about-us" element={<AboutUs />} />
+                      <Route path="/contact" element={<ContactUs />} />
+                    </Route>
+                  </Routes>
+                </Suspense>
+              </Router>
+              <ToastContainer
+                position="top-right"
+                autoClose={2000}
+                hideProgressBar={false}
+                newestOnTop={false}
+                closeOnClick
+                rtl={false}
+                pauseOnFocusLoss
+                draggable
+                pauseOnHover
+                theme="light"
+                transition:Bounce
+              />
+            </div>
+          </CartProvider>
+        </AuthProvider>
+      </React.Suspense>
     </QueryClientProvider>
   );
 }
